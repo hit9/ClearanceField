@@ -84,11 +84,13 @@ void TrueClearanceField::Update(int x, int y) {
   if (g[x][y] != rhs[x][y]) q.insert({k(x, y), {x, y}});
 }
 
-void TrueClearanceField::Compute() {
+int TrueClearanceField::Compute() {
+  int n = 0;
   while (q.size()) {
     auto it = q.begin();
     auto [x, y] = it->second;
     q.erase(it);
+    ++n;
 
     if (g[x][y] > rhs[x][y]) {
       // local over-consistency
@@ -99,9 +101,10 @@ void TrueClearanceField::Compute() {
       Update(x, y);
     }
 
-    // if the (x,y)'s value >= bound u.
+    // if the (x,y) is in consistent and g value >= bound u.
     // there's no need to propagate it to its successors.
-    if (g[x][y] >= u) continue;
+    // A non-inf value means the g value is up to date, it's an accurate value.
+    if (g[x][y] != inf && g[x][y] == rhs[x][y] && g[x][y] >= u) continue;
 
     // update successors (left-top neigbours)
     for (int i = 0; i <= 2; ++i) {
@@ -111,6 +114,7 @@ void TrueClearanceField::Compute() {
       if (x1 >= 0 && y1 >= 0) Update(x1, y1);
     }
   }
+  return n;
 }
 
 }  // namespace true_clearance_field

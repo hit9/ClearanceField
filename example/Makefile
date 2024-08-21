@@ -6,5 +6,8 @@ cmake:
 build:
 	make -C build
 
+run:
+	./build/true-clearance-field-example
+
 .PHONY: build
 

@@ -25,9 +25,6 @@ static const int inf = 0x3f3f3f3f;
 // cell (x,y) is an obstacle.
 using ObstacleChecker = std::function<bool(int x, int y)>;
 
-// CellVisitor is a function to visit a cell (x,y).
-using CellVisitor = std::function<void(int x, int y)>;
-
 class TrueClearanceField {
  public:
   // Paramaters:
@@ -46,7 +43,10 @@ class TrueClearanceField {
   void Build();
   // Returns the pre-calculated minimum distance from cell (x,y) to the nearest obstacle locating
   // in the right-bottom directions.
-  // Returns inf if the distance is larger than u.
+  // Returns a number > u or just inf if the distance is larger than u.
+  // That is, if you provided a upper bound u, then if the value is inf, which means the minimum
+  // distance will be larger than u, but the accurate value is unknown and not maintained. But if
+  // the value is not inf, which means the value is the extact minimum distance.
   // We won't check whether the (x,y) is out of boundy.
   int Get(int x, int y) const;
   // Update should be called after an obstacle is added or removed at cell (x,y).
@@ -54,7 +54,8 @@ class TrueClearanceField {
   // We won't check whether the (x,y) is out of boundy.
   void Update(int x, int y);
   // Compute should be called after any changes.
-  void Compute();
+  // Returns the number of cells updated.
+  int Compute();
 
  private:
   const int w, h;
