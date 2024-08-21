@@ -131,14 +131,14 @@ int Visualizer::Init() {
 
   // Load font.
   if (TTF_Init() == -1) {
-    spdlog::error("SDL_ttf 初始化错误: {}", SDL_GetError());
+    spdlog::error("SDL_ttf init error: {}", SDL_GetError());
     SDL_Quit();
     return -1;
   }
 
   font = TTF_OpenFont("fonts/Inconsolata-Medium.ttf", options.fontSize);
   if (font == nullptr) {
-    spdlog::error("无法打开字体 fonts/Inconsolata-Medium.ttf: {}", SDL_GetError());
+    spdlog::error("cant open fonts/Inconsolata-Medium.ttf: {}", SDL_GetError());
     TTF_Quit();
     SDL_Quit();
     return -1;
@@ -147,7 +147,7 @@ int Visualizer::Init() {
   // Texture surface 0123456789-. black
   SDL_Surface* ts = TTF_RenderText_Solid(font, TextChars, {0, 0, 0, 255});
   if (!ts) {
-    spdlog::error("无法创建字体 SDL_Surface: {}", TTF_GetError());
+    spdlog::error("can create SDL_Surface: {}", TTF_GetError());
     TTF_CloseFont(font);
     TTF_Quit();
     SDL_Quit();
@@ -182,7 +182,7 @@ int Visualizer::Init() {
   // Texture.
   texture = SDL_CreateTextureFromSurface(renderer, ts);
   if (texture == nullptr) {
-    spdlog::error("无法创建数字的 texture: {}", SDL_GetError());
+    spdlog::error("can create font texture: {}", SDL_GetError());
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_FreeSurface(ts);
