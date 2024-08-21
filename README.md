@@ -31,7 +31,7 @@ A cell is able to walk through when its value is not smaller than the agent's si
 | without bound:  ![](misc/true-clearance-field-demo1.gif)      |  with bound `3`: ![](misc/true-clearance-field-demo2.gif)  |
 
 
-larger map: ![](misc/true-clearance-field-demo3.gif)
+larger map with bound `4`: ![](misc/true-clearance-field-demo3.gif)
 
 ### Code example
 
