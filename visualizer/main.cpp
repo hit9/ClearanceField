@@ -12,7 +12,7 @@ using true_clearance_field::inf;
 using true_clearance_field::ObstacleChecker;
 using true_clearance_field::TrueClearanceField;
 
-const int GRID_SIZE = 24;
+const int GRID_SIZE = 32;
 const int N = 100;
 
 int GRID[N][N] = {0};
@@ -20,6 +20,7 @@ int GRID[N][N] = {0};
 struct Options {
   int w, h, u;
   int costUnit, diagonalCostUnit;
+  int fontSize;
 };
 
 // for i=0~9, get TextChars[i]
@@ -93,11 +94,18 @@ int ParseOptionsFromCommandline(int argc, char* argv[], Options& options) {
       .help("upper bound of distance to maintain")
       .default_value(1024)
       .store_into(options.u);
-  program.add_argument("-c").help("cost unit").default_value(1).store_into(options.costUnit);
-  program.add_argument("-cd")
+  program.add_argument("-c", "--cost")
+      .help("cost unit")
+      .default_value(1)
+      .store_into(options.costUnit);
+  program.add_argument("-cd", "--cost-diagonal")
       .help("cost unit on diagonal directions")
       .default_value(1)
       .store_into(options.diagonalCostUnit);
+  program.add_argument("-fs", "--font-size")
+      .help("font size")
+      .default_value(20)
+      .store_into(options.fontSize);
   try {
     program.parse_args(argc, argv);
   } catch (const std::exception& e) {
@@ -128,7 +136,7 @@ int Visualizer::Init() {
     return -1;
   }
 
-  font = TTF_OpenFont("fonts/Inconsolata-Medium.ttf", 18);
+  font = TTF_OpenFont("fonts/Inconsolata-Medium.ttf", options.fontSize);
   if (font == nullptr) {
     spdlog::error("无法打开字体 fonts/Inconsolata-Medium.ttf: {}", SDL_GetError());
     TTF_Quit();
