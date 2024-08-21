@@ -1,6 +1,8 @@
 True Clearance Field
 ====================
 
+Warning: It may be unstable before version 1.0.0.
+
 A simple dynamical minimum obstacle distance (to the right and bottom) field library on equal-weighted 2D grid map.
 
 Reference:
@@ -13,6 +15,7 @@ Reference:
 To solve the pathfinding problem of agents of different sizes in a 2D grid, for an example,
 the 2x2 agent in the figure below always takes its upper left corner cell as its position, and then we consider the area that this position can pass through.
 Each cell has a minimum obstacle distance value, which is the distance from the current cell to the nearest obstacle in the lower right quadrant.
+A cell is able to walk through when its value is not smaller than the agent's size.
 
 ![](./misc/true-clearance-field-demo1.png)
 
