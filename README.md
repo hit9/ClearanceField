@@ -25,8 +25,10 @@ Each cell has a minimum obstacle distance value, which is the distance from the 
 
 | <!-- -->                                                      | <!-- -->                                                    |
 | ------------------------------------------------------------- | ----------------------------------------------------------- |
-| without bound:  ![](misc/true-clearance-field-demo1.gif)      |   with bound `3`: ![](misc/true-clearance-field-demo2.gif)  |
-| larger map: ![](misc/true-clearance-field-demo3.gif)  |
+| without bound:  ![](misc/true-clearance-field-demo1.gif)      |  with bound `3`: ![](misc/true-clearance-field-demo2.gif)  |
+
+
+larger map: ![](misc/true-clearance-field-demo3.gif)
 
 ### Code example
 
@@ -41,6 +43,9 @@ field.Update(x, y);
 
 // Compute after any Update(s).
 field.Compute();
+
+// Get value at (x,y)
+field.Get(x, y);
 ```
 
 ### License
