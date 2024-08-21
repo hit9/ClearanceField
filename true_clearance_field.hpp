@@ -2,6 +2,7 @@
 // equal-weighted 2D grid map.
 // Source code: https://github.com/hit9/true-clearance-field
 // Author: hit9[At]icloud.com, License: BSD
+// Version: 0.1.0
 //
 // Notes:
 // 1. The true-clearance-distance concept can be found at:
