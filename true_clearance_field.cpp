@@ -101,6 +101,9 @@ int TrueClearanceField::Compute() {
       Update(x, y);
     }
 
+    // A cell's g value can only be updated in the q's consuming progress.
+    if (updatedCellVisitor != nullptr) updatedCellVisitor(x, y);
+
     // if the (x,y) is in consistent and g value >= bound u.
     // there's no need to propagate it to its successors.
     // A non-inf value means the g value is up to date, it's an accurate value.

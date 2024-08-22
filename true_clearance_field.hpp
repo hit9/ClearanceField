@@ -2,7 +2,7 @@
 // equal-weighted 2D grid map.
 // Source code: https://github.com/hit9/true-clearance-field
 // Author: hit9[At]icloud.com, License: BSD
-// Version: 0.1.0
+// Version: 0.1.1
 //
 // Notes:
 // 1. The true-clearance-distance concept can be found at:
@@ -26,6 +26,10 @@ static const int inf = 0x3f3f3f3f;
 // cell (x,y) is an obstacle.
 using ObstacleChecker = std::function<bool(int x, int y)>;
 
+// UpdatedCellVisistor is a function that visits the cell of which the value is updated by function
+// Compute.
+using UpdatedCellVisistor = std::function<void(int x, int y)>;
+
 class TrueClearanceField {
  public:
   // Paramaters:
@@ -40,6 +44,8 @@ class TrueClearanceField {
   // * isObstacle(x,y) returns true if the cell (x,y) is an obstacle.
   TrueClearanceField(int w, int h, int u, int costUnit, int diagonalCostUnit,
                      ObstacleChecker isObstacle);
+  // Sets a function to listen the cells of which the value is updated by Compute.
+  void SetUpdatedCellVisistor(UpdatedCellVisistor f) { updatedCellVisitor = f; }
   // Build should be called on an **empty** map before any further feature is used.
   void Build();
   // Returns the pre-calculated minimum distance from cell (x,y) to the nearest obstacle locating
@@ -62,6 +68,7 @@ class TrueClearanceField {
   const int w, h;
   const int u, costUnit, diagonalCostUnit;
   ObstacleChecker originalIsObstacle;
+  UpdatedCellVisistor updatedCellVisitor = nullptr;
 
   // 8 directions of (dx, dy, cost)
   // 0,1,2 left-top.
