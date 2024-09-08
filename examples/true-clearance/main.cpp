@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "clearance_field_interface.hpp"
-#include "true_clearance_field.hpp"
+#include "impls/true_clearance_field.hpp"
 
 const int w = 10, h = 10;
 
