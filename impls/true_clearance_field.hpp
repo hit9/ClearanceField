@@ -16,7 +16,7 @@
 #include <tuple>
 #include <utility>  // for std::pair
 
-#include "clearance_field_interface.hpp"
+#include "../clearance_field_interface.hpp"
 
 namespace clearance_field {
 

@@ -10,7 +10,7 @@
 // 2. The incremental updating mechanism is inspired by LPAStar algorithm.
 //    ref: https://en.wikipedia.org/wiki/Lifelong_Planning_A*
 
-#include "clearance_field_interface.hpp"
+#include "../clearance_field_interface.hpp"
 
 namespace clearance_field {
 
@@ -31,6 +31,19 @@ class BrushfireClearanceField : public IClearanceField {
                           ObstacleChecker isObstacle);
 
   void SetUpdatedCellVisistor(UpdatedCellVisistor f) override { updatedCellVisitor = f; }
+
+  // Returns the minimum distance from cell (x,y) to the nearest obstacle.
+  // Returns a number > u or just inf if the distance is larger than u.
+  int Get(int x, int y) const override;
+
+  // Update should be called after an obstacle is added or removed at cell (x,y).
+  // The nearby cells on the within a distance of u will be updated.
+  // We won't check whether the (x,y) is out of boundy.
+  void Update(int x, int y) override;
+
+  // Compute should be called after any changes.
+  // Returns the number of cells updated.
+  int Compute() override;
 
  private:
   const int w, h;

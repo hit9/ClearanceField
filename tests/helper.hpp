@@ -3,35 +3,37 @@
 
 #include <catch2/catch_all.hpp>
 
-#include "true_clearance_field.hpp"
+#include "clearance_field_interface.hpp"
+
+using clearance_field::IClearanceField;
+using clearance_field::ObstacleChecker;
 
 // Should field equals to expect.
 template <int w, int h>
-void FieldAssertEq(true_clearance_field::TrueClearanceField& field, int expects[w][h]) {
+void FieldAssertEq(IClearanceField* field, int expects[w][h]) {
   for (int x = 0; x < h; ++x) {
     for (int y = 0; y < w; ++y) {
-      REQUIRE(expects[x][y] == field.Get(x, y));
+      REQUIRE(expects[x][y] == field->Get(x, y));
     }
   }
 }
 
 // Should field not less than expect.
 template <int w, int h>
-void FieldAssertEqOrGt(true_clearance_field::TrueClearanceField& field, int expects[w][h]) {
+void FieldAssertEqOrGt(IClearanceField* field, int expects[w][h]) {
   for (int x = 0; x < h; ++x) {
     for (int y = 0; y < w; ++y) {
-      REQUIRE(expects[x][y] <= field.Get(x, y));
+      REQUIRE(expects[x][y] <= field->Get(x, y));
     }
   }
 }
 
 template <int w, int h, int costUnit>
-void Validate(true_clearance_field::TrueClearanceField& field,
-              true_clearance_field::ObstacleChecker isObstacle) {
+void Validate(IClearanceField* field, ObstacleChecker isObstacle) {
   // Very naive helper function to test if a clearance field is valid.
   for (int x = 0; x < h; ++x) {
     for (int y = 0; y < w; ++y) {
-      int dist = field.Get(x, y);
+      int dist = field->Get(x, y);
       // there should be no obstacles inside [(x,y), (x+dist-1, y+dist-1)]
       int x1, y1;
       for (x1 = x; x1 < std::min(h, x + dist / costUnit); ++x1) {

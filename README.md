@@ -1,5 +1,5 @@
-True Clearance Field
-====================
+Clearance Field
+================
 
 Warning: It may be unstable before version 1.0.0.
 
