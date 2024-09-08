@@ -2,7 +2,7 @@
 
 #include <algorithm>  // for std::max, std::min
 
-namespace true_clearance_field {
+namespace clearance_field {
 
 static const int DEFAULT_DIRECTIONS[8][3] = {
     // {dx, dy, IsDiagonal}
@@ -120,4 +120,4 @@ int TrueClearanceField::Compute() {
   return n;
 }
 
-}  // namespace true_clearance_field
+}  // namespace clearance_field

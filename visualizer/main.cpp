@@ -6,11 +6,12 @@
 #include <cstring>
 #include <string>
 
+#include "clearance_field_interface.hpp"
 #include "true_clearance_field.hpp"
 
-using true_clearance_field::inf;
-using true_clearance_field::ObstacleChecker;
-using true_clearance_field::TrueClearanceField;
+using clearance_field::inf;
+using clearance_field::ObstacleChecker;
+using clearance_field::TrueClearanceField;
 
 const int GRID_SIZE = 32;
 const int N = 100;

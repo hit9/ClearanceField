@@ -1,10 +1,9 @@
-// A simple dynamical minimum obstacle distance (to the right and bottom) field library on
-// equal-weighted 2D grid map.
-// Source code: https://github.com/hit9/true-clearance-field
+// Dynamical clearance field (minimum obstacle distance) on 2D grid map.
+// Source code: https://github.com/hit9/clearance-field
 // Author: hit9[At]icloud.com, License: BSD
-// Version: 0.1.2
-//
-// Notes:
+
+// True Clearance Field
+// ~~~~~~~~~~~~~~~~~~~~
 // 1. The true-clearance-distance concept can be found at:
 //    https://web.archive.org/web/20190411040123/http://aigamedev.com/open/article/clearance-based-pathfinding/
 // 2. The incremental updating mechanism is inspired by LPAStar algorithm.
@@ -13,24 +12,15 @@
 #ifndef TRUE_CLEARANCE_FIELD_HPP
 #define TRUE_CLEARANCE_FIELD_HPP
 
-#include <functional>  // for std::function
 #include <map>
 #include <tuple>
 #include <utility>  // for std::pair
 
-namespace true_clearance_field {
+#include "clearance_field_interface.hpp"
 
-static const int inf = 0x3f3f3f3f;
+namespace clearance_field {
 
-// ObstacleChecker is the type of the function that returns true if the given
-// cell (x,y) is an obstacle.
-using ObstacleChecker = std::function<bool(int x, int y)>;
-
-// UpdatedCellVisistor is a function that visits the cell of which the value is updated by function
-// Compute.
-using UpdatedCellVisistor = std::function<void(int x, int y)>;
-
-class TrueClearanceField {
+class TrueClearanceField : public IClearanceField {
  public:
   // Paramaters:
   // * w and h are the width and height of the grid map
@@ -44,10 +34,13 @@ class TrueClearanceField {
   // * isObstacle(x,y) returns true if the cell (x,y) is an obstacle.
   TrueClearanceField(int w, int h, int u, int costUnit, int diagonalCostUnit,
                      ObstacleChecker isObstacle);
+
   // Sets a function to listen the cells of which the value is updated by Compute.
-  void SetUpdatedCellVisistor(UpdatedCellVisistor f) { updatedCellVisitor = f; }
+  void SetUpdatedCellVisistor(UpdatedCellVisistor f) override { updatedCellVisitor = f; }
+
   // Build should be called on an **empty** map before any further feature is used.
-  void Build();
+  void Build() override;
+
   // Returns the pre-calculated minimum distance from cell (x,y) to the nearest obstacle locating
   // in the right-bottom directions.
   // Returns a number > u or just inf if the distance is larger than u.
@@ -55,14 +48,16 @@ class TrueClearanceField {
   // distance will be larger than u, but the accurate value is unknown and not maintained. But if
   // the value is not inf, which means the value is the extact minimum distance.
   // We won't check whether the (x,y) is out of boundy.
-  int Get(int x, int y) const;
+  int Get(int x, int y) const override;
+
   // Update should be called after an obstacle is added or removed at cell (x,y).
   // The nearby cells on the left-top quadrant within a distance of u will be updated.
   // We won't check whether the (x,y) is out of boundy.
-  void Update(int x, int y);
+  void Update(int x, int y) override;
+
   // Compute should be called after any changes.
   // Returns the number of cells updated.
-  int Compute();
+  int Compute() override;
 
  private:
   const int w, h;
@@ -98,6 +93,6 @@ class TrueClearanceField {
   bool isObstacle(int x, int y) const;
 };
 
-}  // namespace true_clearance_field
+}  // namespace clearance_field
 
 #endif
