@@ -22,6 +22,8 @@
 #include <functional>  // for std::function
 #include <map>
 #include <tuple>
+#include <utility>  // for std::pair
+#include <vector>
 
 namespace clearance_field {
 
