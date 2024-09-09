@@ -7,5 +7,5 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 include_directories("../..")
 
-file(GLOB SOURCES main.cpp ../../impls/true_clearance_field.cpp)
+file(GLOB SOURCES main.cpp ../../*.cpp)
 add_executable(true-clearance-field-example ${SOURCES})

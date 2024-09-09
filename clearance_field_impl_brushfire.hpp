@@ -10,7 +10,7 @@
 // 2. The incremental updating mechanism is inspired by LPAStar algorithm.
 //    ref: https://en.wikipedia.org/wiki/Lifelong_Planning_A*
 
-#include "../clearance_field_interface.hpp"
+#include "clearance_field_interface.hpp"
 
 namespace clearance_field {
 

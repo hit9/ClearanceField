@@ -12,7 +12,7 @@ include_directories(".." ".")
 find_package(Catch2 CONFIG REQUIRED)
 
 # Targets
-file(GLOB TEST_SOURCES *_test.cpp ../*.cpp ../impls/*.cpp)
+file(GLOB TEST_SOURCES *_test.cpp ../*.cpp)
 add_executable(clearance_field_tests ${TEST_SOURCES})
 
 target_link_libraries(clearance_field_tests PRIVATE Catch2::Catch2WithMain)

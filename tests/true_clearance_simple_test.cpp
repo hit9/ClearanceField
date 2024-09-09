@@ -1,8 +1,8 @@
 #include <catch2/catch_all.hpp>
 
+#include "clearance_field_impl_true.hpp"
 #include "clearance_field_interface.hpp"
 #include "helper.hpp"
-#include "impls/true_clearance_field.hpp"
 
 using clearance_field::ObstacleChecker;
 using clearance_field::TrueClearanceField;

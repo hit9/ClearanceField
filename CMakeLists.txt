@@ -2,11 +2,15 @@ cmake_minimum_required(VERSION 3.10)
 
 project(clearance_field)
 
-file(GLOB CLEARANCE_FIELD_SOURCES *.cpp impls/*.cpp)
+file(GLOB CLEARANCE_FIELD_SOURCES *.cpp)
 
 add_library(clearance_field SHARED ${CLEARANCE_FIELD_SOURCES})
 set_target_properties(clearance_field
-    PROPERTIES PUBLIC_HEADER "true_clearance_field.hpp")
+    PROPERTIES PUBLIC_HEADER "clearance_field_interface.hpp")
+set_target_properties(clearance_field
+    PROPERTIES PUBLIC_HEADER "clearance_field_impl_brushfire.hpp")
+set_target_properties(clearance_field
+    PROPERTIES PUBLIC_HEADER "clearance_field_impl_true.hpp")
 
 install(
     TARGETS clearance_field

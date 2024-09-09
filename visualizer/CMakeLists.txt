@@ -5,7 +5,7 @@ project(clearance-field-visualizer)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
-file(GLOB SOURCES *.cpp ../*.cpp ../impls/*.cpp)
+file(GLOB SOURCES *.cpp ../*.cpp)
 add_executable(clearance-field-visualizer ${SOURCES})
 
 find_package(spdlog)

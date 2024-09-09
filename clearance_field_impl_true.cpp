@@ -1,4 +1,4 @@
-#include "true_clearance_field.hpp"
+#include "clearance_field_impl_true.hpp"
 
 #include <algorithm>  // for std::max, std::min
 

@@ -6,8 +6,8 @@
 #include <cstring>
 #include <string>
 
+#include "clearance_field_impl_true.hpp"
 #include "clearance_field_interface.hpp"
-#include "impls/true_clearance_field.hpp"
 
 using clearance_field::inf;
 using clearance_field::ObstacleChecker;
