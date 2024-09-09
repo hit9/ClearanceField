@@ -4,6 +4,8 @@
 
 #include "clearance_field.hpp"
 
+#include <cassert>
+
 namespace clearance_field {
 
 // 8 directions of (dx, dy, cost)
@@ -119,10 +121,10 @@ int LPAClearanceFieldAlgorithm::Compute() {
 }
 
 ////////////////////////////////////
-/// TrueClearanceField
+/// ClearanceFieldBase
 ////////////////////////////////////
 
-TrueClearanceField::TrueClearanceField(int w, int h, int u, int costUnit, int diagonalCostUnit,
+ClearanceFieldBase::ClearanceFieldBase(int w, int h, int u, int costUnit, int diagonalCostUnit,
                                        ObstacleChecker isObstacle)
     : w(w),
       h(h),
@@ -136,16 +138,60 @@ TrueClearanceField::TrueClearanceField(int w, int h, int u, int costUnit, int di
     directions[i][1] = DEFAULT_DIRECTIONS[i][1];
     directions[i][2] = DEFAULT_DIRECTIONS[i][2] ? diagonalCostUnit : costUnit;
   }
+}
 
+// Proxy the algorithm's functions.
+void ClearanceFieldBase::SetUpdatedCellVisistor(CellVisitor f) { lpa->SetUpdatedCellVisistor(f); }
+int ClearanceFieldBase::Get(int x, int y) const { return lpa->Get(x, y); }
+void ClearanceFieldBase::Update(int x, int y) { lpa->Update(x, y); }
+int ClearanceFieldBase::Compute() { return lpa->Compute(); }
+
+// makePredecessorsVisitor returns a PredecessorsVisitor function.
+// Parameter directionStart and directionEnd are the index of the directions array,
+// they indicates the predecessor directions's start and end.
+PredecessorsVisitor ClearanceFieldBase::makePredecessorsVisitor(int directionStart,
+                                                                int directionEnd) {
+  return [this, directionStart, directionEnd](int x, int y, NeighbourCellVisitor& visitor) {
+    // for predecessors (right-bottom neigbours)
+    for (int i = directionStart; i <= directionEnd; ++i) {
+      const auto& d = directions[i];
+      int dx = d[0], dy = d[1], cost = d[2];
+      int x1 = x + dx, y1 = y + dy;
+      visitor(x1, y1, cost);
+    }
+  };
+}
+
+// makeSuccessorsVisitor returns a SuccessorsVisitor function.
+// Parameter directionStart and directionEnd are the index of the directions array,
+// they indicates the successor directions's start and end.
+SuccessorsVisitor ClearanceFieldBase::makeSuccessorsVisitor(int directionStart, int directionEnd) {
+  return [this, directionStart, directionEnd](int x, int y, CellVisitor& visitor) {
+    for (int i = directionStart; i <= directionEnd; ++i) {
+      const auto& d = directions[i];
+      int dx = d[0], dy = d[1];
+      int x1 = x + dx, y1 = y + dy;
+      visitor(x1, y1);
+    }
+  };
+}
+
+////////////////////////////////////
+/// TrueClearanceField
+////////////////////////////////////
+
+TrueClearanceField::TrueClearanceField(int w, int h, int u, int costUnit, int diagonalCostUnit,
+                                       ObstacleChecker isObstacle)
+    : ClearanceFieldBase(w, h, u, costUnit, diagonalCostUnit, isObstacle) {
   // We use a larger map for LPAClearanceFieldAlgorithm.
   // Assuming the grid map is surrounded by walls at the right and bottom directions.
   // In the diagram below, 'X' composes the virtual walls (obstacle)
-  //          w
-  //    +-----------X
-  //    |-----------X
-  //   h|-----------X
-  //    |-----------X
-  //    XXXXXXXXXXXXX
+  //          w+1
+  //       +-----------X
+  //       |-----------X
+  //   h+1 |-----------X
+  //       |-----------X
+  //       XXXXXXXXXXXXX
   ObstacleChecker obstacleChecker = [this, w, h](int x, int y) {
     if (x == h || y == w) return true;
     return originalIsObstacle(x, y);
@@ -160,15 +206,7 @@ TrueClearanceField::TrueClearanceField(int w, int h, int u, int costUnit, int di
   //    |       |
   //    +-------+ c
   //    b
-  PredecessorsVisitor predecessorsVisitor = [this](int x, int y, NeighbourCellVisitor& visitor) {
-    // for predecessors (right-bottom neigbours)
-    for (int i = 4; i <= 6; ++i) {
-      const auto& d = directions[i];
-      int dx = d[0], dy = d[1], cost = d[2];
-      int x1 = x + dx, y1 = y + dy;
-      visitor(x1, y1, cost);
-    }
-  };
+  PredecessorsVisitor predecessorsVisitor = makePredecessorsVisitor(4, 6);
 
   // successorVisitor is to visitor successors on the left-top directions.
   //
@@ -180,38 +218,84 @@ TrueClearanceField::TrueClearanceField(int w, int h, int u, int costUnit, int di
   //   |       |
   //   +---- (x,y)
   //   c
-  SuccessorsVisitor successorVisitor = [this](int x, int y, CellVisitor& visitor) {
-    for (int i = 0; i <= 2; ++i) {
-      const auto& d = directions[i];
-      int dx = d[0], dy = d[1];
-      int x1 = x + dx, y1 = y + dy;
-      visitor(x1, y1);
-    }
-  };
+  SuccessorsVisitor successorVisitor = makeSuccessorsVisitor(0, 2);
 
-  a = new LPAClearanceFieldAlgorithm(w + 1, h + 1, u, obstacleChecker, predecessorsVisitor,
-                                     successorVisitor);
+  lpa = new LPAClearanceFieldAlgorithm(w + 1, h + 1, u, obstacleChecker, predecessorsVisitor,
+                                       successorVisitor);
 }
 
 TrueClearanceField::~TrueClearanceField() {
-  delete a;
-  a = nullptr;
+  delete lpa;
+  lpa = nullptr;
 }
 
 void TrueClearanceField::Build() {
+  assert(lpa != nullptr);
   // right wall of the larger map.
-  for (int x = 0; x <= h; ++x) a->Update(x, w);
+  for (int x = 0; x <= h; ++x) lpa->Update(x, w);
   // bottom wall of the larger map.
   // avoid visiting the right-bottom corner (h,w) twice
-  for (int y = 0; y < w; ++y) a->Update(h, y);
+  for (int y = 0; y < w; ++y) lpa->Update(h, y);
   // initial the map.
-  a->Compute();
+  lpa->Compute();
 }
 
-// Proxy the algorithm's functions.
-void TrueClearanceField::SetUpdatedCellVisistor(CellVisitor f) { a->SetUpdatedCellVisistor(f); }
-int TrueClearanceField::Get(int x, int y) const { return a->Get(x, y); }
-void TrueClearanceField::Update(int x, int y) { a->Update(x, y); }
-int TrueClearanceField::Compute() { return a->Compute(); }
+////////////////////////////////////
+/// BrushfireClearanceField
+////////////////////////////////////
+
+BrushfireClearanceField::BrushfireClearanceField(int w, int h, int u, int costUnit,
+                                                 int diagonalCostUnit, ObstacleChecker isObstacle)
+    : ClearanceFieldBase(w, h, u, costUnit, diagonalCostUnit, isObstacle) {
+  // We use a larger map for LPAClearanceFieldAlgorithm.
+  // Assuming the grid map is surrounded by walls at 4 directions.
+  // In the diagram below, 'X' composes the virtual walls (obstacle)
+  //           w+2
+  //       XXXXXXXXXXXXX
+  //       X-----------X
+  //   h+2 X-----------X
+  //       X-----------X
+  //       XXXXXXXXXXXXX
+  ObstacleChecker obstacleChecker = [this, w, h](int x, int y) {
+    if (x == 0 || y == 0) return true;
+    if (x == h + 1 || y == w + 1) return true;
+    return originalIsObstacle(x - 1, y - 1);
+  };
+
+  // Function to visit predecessors on 8 directions.
+  PredecessorsVisitor predecessorsVisitor = makePredecessorsVisitor(0, 7);
+
+  // Function to visit successors on 8 directions.
+  SuccessorsVisitor successorVisitor = makeSuccessorsVisitor(0, 7);
+
+  lpa = new LPAClearanceFieldAlgorithm(w + 2, h + 2, u, obstacleChecker, predecessorsVisitor,
+                                       successorVisitor);
+}
+
+BrushfireClearanceField::~BrushfireClearanceField() {
+  delete lpa;
+  lpa = nullptr;
+}
+
+void BrushfireClearanceField::Build() {
+  assert(lpa != nullptr);
+  // left wall of the larger map.
+  for (int x = 0; x <= h + 1; ++x) lpa->Update(x, 0);
+
+  // top wall of the larger map.
+  // avoid visiting the left-top corner (0,0) twice.
+  for (int y = 1; y <= w + 1; ++y) lpa->Update(0, y);
+
+  // right wall of the larger map.
+  // avoid visiting the right-top corner (0, w+1) twice
+  for (int x = 1; x <= h + 1; ++x) lpa->Update(x, w + 1);
+
+  // bottom wall of the larger map.
+  // avoid visiting the left-bottom (h+1,0) and right-bottom (h+1,w+1) corners twice.
+  for (int y = 1; y < w + 1; ++y) lpa->Update(h + 1, y);
+
+  // initial the map.
+  lpa->Compute();
+}
 
 }  // namespace clearance_field

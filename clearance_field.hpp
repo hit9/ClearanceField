@@ -128,10 +128,10 @@ class LPAClearanceFieldAlgorithm {
 };
 
 ////////////////////////////////////
-/// TrueClearanceField
+/// ClearanceFieldBase
 ////////////////////////////////////
 
-class TrueClearanceField : public IClearanceField {
+class ClearanceFieldBase : public IClearanceField {
  public:
   // * w and h are the width and height of the grid map
   // * u is the upper bound of obstacle distance to maintain, usually setting this to (or larger
@@ -142,18 +142,14 @@ class TrueClearanceField : public IClearanceField {
   //   for calculations, for better performance, accuracy and convenience. So it's recommended to
   //   set costUnit to a value larger than 10.
   // * isObstacle(x,y) returns true if the cell (x,y) is an obstacle.
-  TrueClearanceField(int w, int h, int u, int costUnit, int diagonalCostUnit,
+  // * a is the pointer to the algorithm handler, should be maintained by the implementer class.
+  ClearanceFieldBase(int w, int h, int u, int costUnit, int diagonalCostUnit,
                      ObstacleChecker isObstacle);
-  ~TrueClearanceField();
 
   // Sets a function to listen the cells of which the value is updated by Compute.
   void SetUpdatedCellVisistor(CellVisitor f) override;
 
-  // Build should be called on an **empty** map before any further feature is used.
-  void Build() override;
-
-  // Returns the pre-calculated minimum distance from cell (x,y) to the nearest obstacle locating
-  // in the right-bottom directions.
+  // Returns the pre-calculated minimum distance from cell (x,y) to the nearest obstacle around.
   // Returns a number > u or just inf if the distance is larger than u.
   // That is, if you provided a upper bound u, then if the value is inf, which means the minimum
   // distance will be larger than u, but the accurate value is unknown and not maintained. But if
@@ -162,22 +158,63 @@ class TrueClearanceField : public IClearanceField {
   int Get(int x, int y) const override;
 
   // Update should be called after an obstacle is added or removed at cell (x,y).
-  // The nearby cells on the left-top quadrant within a distance of u will be updated.
-  // We won't check whether the (x,y) is out of boundy.
+  // The nearby cells within a distance of u will be updated.
+  // We won't check whether the (x,y) is out of boundry.
   void Update(int x, int y) override;
 
   // Compute should be called after any changes.
   // Returns the number of cells updated.
   int Compute() override;
 
- private:
+ protected:
   const int w, h;
   const int u, costUnit, diagonalCostUnit;
   ObstacleChecker originalIsObstacle;
   // 8 directions of (dx, dy, cost)
   int directions[8][3];
 
-  LPAClearanceFieldAlgorithm* a = nullptr;
+  // this pointer should be maintained by the implementer class.
+  LPAClearanceFieldAlgorithm* lpa;
+
+  // ~~~~~~~ util functions ~~~~~~
+  PredecessorsVisitor makePredecessorsVisitor(int directionStart, int directionEnd);
+  SuccessorsVisitor makeSuccessorsVisitor(int directionStart, int directionEnd);
+};
+
+////////////////////////////////////
+/// TrueClearanceField
+////////////////////////////////////
+
+// TrueClearanceField maintains the minimum distance to the obstacles on the right-bottom
+// directions incrementally.
+// Ref:
+// https://web.archive.org/web/20190411040123/http://aigamedev.com/open/article/clearance-based-pathfinding/
+class TrueClearanceField : public ClearanceFieldBase {
+ public:
+  TrueClearanceField(int w, int h, int u, int costUnit, int diagonalCostUnit,
+                     ObstacleChecker isObstacle);
+  ~TrueClearanceField();
+
+  // Build should be called on an **empty** map before any further feature is used.
+  void Build() override;
+};
+
+////////////////////////////////////
+/// BrushfireClearanceField
+////////////////////////////////////
+
+// BrushfireClearanceField maintains the minimum distance to the obstacles around incrementally.
+// Ref:
+//  * https://web.ist.utl.pt/~margaridaacferreira/RoboticsFun/
+//  * https://www.societyofrobots.com/programming_wavefront.shtml
+class BrushfireClearanceField : public ClearanceFieldBase {
+ public:
+  BrushfireClearanceField(int w, int h, int u, int costUnit, int diagonalCostUnit,
+                          ObstacleChecker isObstacle);
+  ~BrushfireClearanceField();
+
+  // Build should be called on an **empty** map before any further feature is used.
+  void Build() override;
 };
 
 }  // namespace clearance_field
