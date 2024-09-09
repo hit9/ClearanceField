@@ -33,7 +33,7 @@ A cell is able to walk through when its value is not smaller than the agent's si
 * Updating is dynamical (incremental).
 * Supports a distance bound, thus updates are only propagated within a limited neighborhood.
 
-### Demos (TrueClearanceField)
+### Demos
 
 | <!-- -->                                                      | <!-- -->                                                    |
 | ------------------------------------------------------------- | ----------------------------------------------------------- |
@@ -41,11 +41,13 @@ A cell is able to walk through when its value is not smaller than the agent's si
 | `TrueClearanceField` larger map with bound `4`: ![](misc/true-clearance-field-demo3.gif) | `BrushfireClearanceField` with bound `3`: ![](misc/brushfire-clearance-field-demo1.jpg) |
 
 
-### Code example (TrueClearanceField)
+### Code example
 
 ```cpp
 clearance_field::ObstacleChecker isObstacle = [](int x, int y) { return grid[x][y]; };
 clearance_field::TrueClearanceField field(w, h, 1e5, 1, 1, isObstacle);
+// OR clearance_field::BrushfireClearanceField field(w, h, 1e5, 1, 1, isObstacle);
+
 field.Build();
 
 // Add obstacle at (x,y).
@@ -59,22 +61,12 @@ field.Compute();
 field.Get(x, y);
 ```
 
-### Code example (BrushfireClearanceField)
+#### Visualizer
 
-```cpp
-clearance_field::ObstacleChecker isObstacle = [](int x, int y) { return grid[x][y]; };
-clearance_field::BrushfireClearanceField field(w, h, 1e5, 1, 1, isObstacle);
-field.Build();
-
-// Add obstacle at (x,y).
-grid[x][y] = 1;
-field.Update(x, y);
-
-// Compute after any Update(s).
-field.Compute();
-
-// Get value at (x,y)
-field.Get(x, y);
+```bash
+make -C visualizer
+cd visualizer
+./build/clearance-field-visualizer -w 20 -h 20 -impl 1 -u 3
 ```
 
 ### License
