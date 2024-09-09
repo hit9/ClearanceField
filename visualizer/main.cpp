@@ -6,11 +6,13 @@
 #include <cstring>
 #include <string>
 
-#include "true_clearance_field.hpp"
+#include "clearance_field.hpp"
 
-using true_clearance_field::inf;
-using true_clearance_field::ObstacleChecker;
-using true_clearance_field::TrueClearanceField;
+using clearance_field::BrushfireClearanceField;
+using clearance_field::IClearanceField;
+using clearance_field::inf;
+using clearance_field::ObstacleChecker;
+using clearance_field::TrueClearanceField;
 
 const int GRID_SIZE = 32;
 const int N = 100;
@@ -21,6 +23,10 @@ struct Options {
   int w, h, u;
   int costUnit, diagonalCostUnit;
   int fontSize;
+  // implementer:
+  // 0 for TrueClearanceField
+  // 1 for BrushfireClearanceField
+  int implementer = 0;
 };
 
 // for i=0~9, get TextChars[i]
@@ -29,14 +35,14 @@ const char TextChars[12] = "0123456789-";
 
 class Visualizer {
  public:
-  Visualizer(const Options& options, TrueClearanceField& tf);
+  Visualizer(const Options& options, IClearanceField* field);
   int Init();
   void Start();
   void Destroy();
 
  private:
   const Options& options;
-  TrueClearanceField& tf;
+  IClearanceField* field = nullptr;
 
   SDL_Window* window;
   SDL_Renderer* renderer;
@@ -70,13 +76,27 @@ int main(int argc, char* argv[]) {
 
   // Field
   ObstacleChecker isObstacle = [](int x, int y) { return GRID[x][y]; };
-  TrueClearanceField tf(options.w, options.h, options.u, options.costUnit,
-                        options.diagonalCostUnit, isObstacle);
+
+  IClearanceField* field = nullptr;
+  if (options.implementer == 0) {
+    field = new TrueClearanceField(options.w, options.h, options.u, options.costUnit,
+                                   options.diagonalCostUnit, isObstacle);
+    spdlog::info("using TrueClearanceField");
+  } else {
+    field = new BrushfireClearanceField(options.w, options.h, options.u, options.costUnit,
+                                        options.diagonalCostUnit, isObstacle);
+    spdlog::info("using BrushfireClearanceField");
+  }
+
   // Visualizer
-  Visualizer visualizer(options, tf);
-  if (visualizer.Init() != 0) return -1;
+  Visualizer visualizer(options, field);
+  if (visualizer.Init() != 0) {
+    delete field;
+    return -1;
+  }
   visualizer.Start();
   visualizer.Destroy();
+  delete field;
   return 0;
 }
 
@@ -106,6 +126,10 @@ int ParseOptionsFromCommandline(int argc, char* argv[], Options& options) {
       .help("font size")
       .default_value(20)
       .store_into(options.fontSize);
+  program.add_argument("-impl", "--implementer")
+      .help("implementer, 0 for TrueClearanceField, 1 for BrushfireClearanceField")
+      .default_value(0)
+      .store_into(options.implementer);
   try {
     program.parse_args(argc, argv);
   } catch (const std::exception& e) {
@@ -119,8 +143,8 @@ int ParseOptionsFromCommandline(int argc, char* argv[], Options& options) {
   return 0;
 }
 
-Visualizer::Visualizer(const Options& options, TrueClearanceField& tf)
-    : options(options), tf(tf) {}
+Visualizer::Visualizer(const Options& options, IClearanceField* field)
+    : options(options), field(field) {}
 
 int Visualizer::Init() {
   // Init SDL
@@ -206,7 +230,7 @@ int Visualizer::Init() {
   font_char_height = TTF_FontHeight(font);
 
   // TrueClearanceField.
-  tf.Build();
+  field->Build();
 
   spdlog::info("Visualizer init done");
   return 0;
@@ -267,17 +291,17 @@ void Visualizer::reset() {
     for (int y = 0; y < options.w; ++y) {
       if (GRID[x][y]) {
         GRID[x][y] = 0;
-        tf.Update(x, y);
+        field->Update(x, y);
       }
     }
   }
-  tf.Compute();
+  field->Compute();
 }
 
 void Visualizer::handleInvertObstacle(int x, int y) {
   GRID[x][y] ^= 1;
-  tf.Update(x, y);
-  int n = tf.Compute();
+  field->Update(x, y);
+  int n = field->Compute();
   spdlog::info("updated {} cells", n);
 }
 
@@ -295,7 +319,7 @@ void Visualizer::draw() {
         SDL_RenderFillRect(renderer, &inner);
       }
       // Fill the number
-      int v = tf.Get(x, y);
+      int v = field->Get(x, y);
       if (v == inf) {
         // render a single '-' in the middler of rect
         int x1 = rect.x + (rect.w - font_char_width[10]) / 2;

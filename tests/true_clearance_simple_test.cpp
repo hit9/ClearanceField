@@ -1,11 +1,14 @@
 #include <catch2/catch_all.hpp>
 
+#include "clearance_field.hpp"
 #include "helper.hpp"
-#include "true_clearance_field.hpp"
+
+using clearance_field::ObstacleChecker;
+using clearance_field::TrueClearanceField;
 
 // Reference:
 // https://web.archive.org/web/20190411040123/http://aigamedev.com/open/article/clearance-based-pathfinding/
-TEST_CASE("simple with bound") {
+TEST_CASE("simple - TrueClearanceField") {
   int w = 10, h = 10;
 
   int G[10][10] = {
@@ -25,18 +28,18 @@ TEST_CASE("simple with bound") {
 
   int grid[10][10] = {0};
 
-  true_clearance_field::ObstacleChecker isObstacle = [&grid](int x, int y) { return grid[x][y]; };
-  true_clearance_field::TrueClearanceField field(w, h, 4, 1, 1, isObstacle);
+  ObstacleChecker isObstacle = [&grid](int x, int y) { return grid[x][y]; };
+  TrueClearanceField field(w, h, 1024, 1, 1, isObstacle);
   field.Build();
 
   int expect1[10][10] = {
       // clang-format off
-      {4, 4, 4, 4, 4, 4, 4, 3, 2, 1},
-      {4, 4, 4, 4, 4, 4, 4, 3, 2, 1},
-      {4, 4, 4, 4, 4, 4, 4, 3, 2, 1},
-      {4, 4, 4, 4, 4, 4, 4, 3, 2, 1},
-      {4, 4, 4, 4, 4, 4, 4, 3, 2, 1},
-      {4, 4, 4, 4, 4, 4, 4, 3, 2, 1},
+     {10, 9, 8, 7, 6, 5, 4, 3, 2, 1},
+      {9, 9, 8, 7, 6, 5, 4, 3, 2, 1},
+      {8, 8, 8, 7, 6, 5, 4, 3, 2, 1},
+      {7, 7, 7, 7, 6, 5, 4, 3, 2, 1},
+      {6, 6, 6, 6, 6, 5, 4, 3, 2, 1},
+      {5, 5, 5, 5, 5, 5, 4, 3, 2, 1},
       {4, 4, 4, 4, 4, 4, 4, 3, 2, 1},
       {3, 3, 3, 3, 3, 3, 3, 3, 2, 1},
       {2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
@@ -44,8 +47,8 @@ TEST_CASE("simple with bound") {
       // clang-format on
   };
 
-  FieldAssertEqOrGt<10, 10>(field, expect1);
-  Validate<10, 10, 1>(field, isObstacle);
+  FieldAssertEq<10, 10>(&field, expect1);
+  Validate<10, 10, 1>(&field, isObstacle);
 
   for (int x = 0; x < h; ++x) {
     for (int y = 0; y < w; ++y) {
@@ -71,6 +74,6 @@ TEST_CASE("simple with bound") {
     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
       // clang-format on
   };
-  FieldAssertEq<10, 10>(field, expect2);
-  Validate<10, 10, 1>(field, isObstacle);
+  FieldAssertEq<10, 10>(&field, expect2);
+  Validate<10, 10, 1>(&field, isObstacle);
 }

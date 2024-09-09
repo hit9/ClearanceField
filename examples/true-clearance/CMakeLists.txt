@@ -5,7 +5,7 @@ project(true-clearance-field-example)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
-file(GLOB SOURCES main.cpp ../true_clearance_field.cpp)
-add_executable(true-clearance-field-example ${SOURCES})
+include_directories("../..")
 
-include_directories("..")
+file(GLOB SOURCES main.cpp ../../*.cpp)
+add_executable(true-clearance-field-example ${SOURCES})

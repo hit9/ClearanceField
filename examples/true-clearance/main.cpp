@@ -1,7 +1,7 @@
 #include <iomanip>
 #include <iostream>
 
-#include "true_clearance_field.hpp"
+#include "clearance_field.hpp"
 
 const int w = 10, h = 10;
 
@@ -23,15 +23,15 @@ int G[w][h] = {
 int grid[w][h] = {0};
 
 int main() {
-  true_clearance_field::ObstacleChecker isObstacle = [](int x, int y) { return grid[x][y]; };
-  true_clearance_field::TrueClearanceField field(w, h, 10000, 1, 1, isObstacle);
+  clearance_field::ObstacleChecker isObstacle = [](int x, int y) { return grid[x][y]; };
+  clearance_field::TrueClearanceField field(w, h, 10000, 1, 1, isObstacle);
 
   auto inspect = [&field]() {
     for (int x = 0; x < h; ++x) {
       for (int y = 0; y < w; ++y) {
         int v = field.Get(x, y);
         std::cout << std::setw(4);
-        if (v == true_clearance_field::inf)
+        if (v == clearance_field::inf)
           std::cout << "inf";
         else
           std::cout << v;
