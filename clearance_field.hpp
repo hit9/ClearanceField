@@ -8,13 +8,10 @@
 // ~~~~~~~~
 // 1. IClearanceField: the interface of all clearance field implementations.
 // 2. LPAClearanceFieldAlgorithm: the incremental updating algorithm.
-// 3. TrueClearanceField Implementer.
-//    Ref:
-//    https://web.archive.org/web/20190411040123/http://aigamedev.com/open/article/clearance-based-pathfinding/
-// 4. BrushfireClearanceField Implementer
-//    Ref:
-//      * https://web.ist.utl.pt/~margaridaacferreira/RoboticsFun/
-//      * https://www.societyofrobots.com/programming_wavefront.shtml
+// 3. TrueClearanceField implementer.
+// 4. BrushfireClearanceField implementer.
+// 5. Ref:
+// https://web.archive.org/web/20190411040123/http://aigamedev.com/open/article/clearance-based-pathfinding/
 
 #ifndef CLEARANCE_FIELD_HPP
 #define CLEARANCE_FIELD_HPP
@@ -136,16 +133,6 @@ class LPAClearanceFieldAlgorithm {
 
 class ClearanceFieldBase : public IClearanceField {
  public:
-  // * w and h are the width and height of the grid map
-  // * u is the upper bound of obstacle distance to maintain, usually setting this to (or larger
-  //   than) the size of moving unit.
-  // * costUnit is the unit cost moving from one cell to neighbour cells on horizontal and vertical
-  //   directions. diagonalCostUnit is the unit cost on diagonal directions, generally it can be
-  //   set to 1.414 times of costUnit. We stick to use integers instead of floating point numbers
-  //   for calculations, for better performance, accuracy and convenience. So it's recommended to
-  //   set costUnit to a value larger than 10.
-  // * isObstacle(x,y) returns true if the cell (x,y) is an obstacle.
-  // * a is the pointer to the algorithm handler, should be maintained by the implementer class.
   ClearanceFieldBase(int w, int h, int u, int costUnit, int diagonalCostUnit,
                      ObstacleChecker isObstacle);
 
@@ -181,6 +168,16 @@ class ClearanceFieldBase : public IClearanceField {
 // https://web.archive.org/web/20190411040123/http://aigamedev.com/open/article/clearance-based-pathfinding/
 class TrueClearanceField : public ClearanceFieldBase {
  public:
+  // * w and h are the width and height of the grid map
+  // * u is the upper bound of obstacle distance to maintain, usually setting this to (or larger
+  //   than) the size of moving agents, the position should be the left-top corner of the agent.
+  // * costUnit is the unit cost moving from one cell to neighbour cells on horizontal and vertical
+  //   directions. diagonalCostUnit is the unit cost on diagonal directions, generally it can be
+  //   set to 1.414 times of costUnit. We stick to use integers instead of floating point numbers
+  //   for calculations, for better performance, accuracy and convenience. So it's recommended to
+  //   set costUnit to a value larger than 10.
+  // * isObstacle(x,y) returns true if the cell (x,y) is an obstacle.
+  // * a is the pointer to the algorithm handler, should be maintained by the implementer class.
   TrueClearanceField(int w, int h, int u, int costUnit, int diagonalCostUnit,
                      ObstacleChecker isObstacle);
   ~TrueClearanceField();
@@ -208,11 +205,18 @@ class TrueClearanceField : public ClearanceFieldBase {
 ////////////////////////////////////
 
 // BrushfireClearanceField maintains the minimum distance to the obstacles around incrementally.
-// Ref:
-//  * https://web.ist.utl.pt/~margaridaacferreira/RoboticsFun/
-//  * https://www.societyofrobots.com/programming_wavefront.shtml
 class BrushfireClearanceField : public ClearanceFieldBase {
  public:
+  // * w and h are the width and height of the grid map
+  // * u is the upper bound of obstacle distance to maintain, usually setting this to (or larger
+  //   than) the radius of moving agents, the moving position should be the center of the agent.
+  // * costUnit is the unit cost moving from one cell to neighbour cells on horizontal and vertical
+  //   directions. diagonalCostUnit is the unit cost on diagonal directions, generally it can be
+  //   set to 1.414 times of costUnit. We stick to use integers instead of floating point numbers
+  //   for calculations, for better performance, accuracy and convenience. So it's recommended to
+  //   set costUnit to a value larger than 10.
+  // * isObstacle(x,y) returns true if the cell (x,y) is an obstacle.
+  // * a is the pointer to the algorithm handler, should be maintained by the implementer class.
   BrushfireClearanceField(int w, int h, int u, int costUnit, int diagonalCostUnit,
                           ObstacleChecker isObstacle);
   ~BrushfireClearanceField();
