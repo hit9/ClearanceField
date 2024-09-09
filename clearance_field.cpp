@@ -142,8 +142,6 @@ ClearanceFieldBase::ClearanceFieldBase(int w, int h, int u, int costUnit, int di
 
 // Proxy the algorithm's functions.
 void ClearanceFieldBase::SetUpdatedCellVisistor(CellVisitor f) { lpa->SetUpdatedCellVisistor(f); }
-int ClearanceFieldBase::Get(int x, int y) const { return lpa->Get(x, y); }
-void ClearanceFieldBase::Update(int x, int y) { lpa->Update(x, y); }
 int ClearanceFieldBase::Compute() { return lpa->Compute(); }
 
 // makePredecessorsVisitor returns a PredecessorsVisitor function.
@@ -240,6 +238,9 @@ void TrueClearanceField::Build() {
   lpa->Compute();
 }
 
+int TrueClearanceField::Get(int x, int y) const { return lpa->Get(x, y); }
+void TrueClearanceField::Update(int x, int y) { lpa->Update(x, y); }
+
 ////////////////////////////////////
 /// BrushfireClearanceField
 ////////////////////////////////////
@@ -297,5 +298,8 @@ void BrushfireClearanceField::Build() {
   // initial the map.
   lpa->Compute();
 }
+
+int BrushfireClearanceField::Get(int x, int y) const { return lpa->Get(x + 1, y + 1); }
+void BrushfireClearanceField::Update(int x, int y) { lpa->Update(x + 1, y + 1); }
 
 }  // namespace clearance_field

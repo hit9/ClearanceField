@@ -46,6 +46,7 @@ using ObstacleChecker = std::function<bool(int x, int y)>;
 // Any implementers should guarantee that the clearance values are computed incrementally.
 class IClearanceField {
  public:
+  virtual ~IClearanceField() {}
   // SetUpdatedCellVisistor sets a function to listen cells of which the clearance value
   // are changed by a Compute() call.
   virtual void SetUpdatedCellVisistor(CellVisitor f) = 0;
@@ -149,19 +150,6 @@ class ClearanceFieldBase : public IClearanceField {
   // Sets a function to listen the cells of which the value is updated by Compute.
   void SetUpdatedCellVisistor(CellVisitor f) override;
 
-  // Returns the pre-calculated minimum distance from cell (x,y) to the nearest obstacle around.
-  // Returns a number > u or just inf if the distance is larger than u.
-  // That is, if you provided a upper bound u, then if the value is inf, which means the minimum
-  // distance will be larger than u, but the accurate value is unknown and not maintained. But if
-  // the value is not inf, which means the value is the extact minimum distance.
-  // We won't check whether the (x,y) is out of boundry.
-  int Get(int x, int y) const override;
-
-  // Update should be called after an obstacle is added or removed at cell (x,y).
-  // The nearby cells within a distance of u will be updated.
-  // We won't check whether the (x,y) is out of boundry.
-  void Update(int x, int y) override;
-
   // Compute should be called after any changes.
   // Returns the number of cells updated.
   int Compute() override;
@@ -197,6 +185,20 @@ class TrueClearanceField : public ClearanceFieldBase {
 
   // Build should be called on an **empty** map before any further feature is used.
   void Build() override;
+
+  // Returns the pre-calculated minimum distance from cell (x,y) to the nearest obstacle at the
+  // right-bottom directions.
+  // Returns a number > u or just inf if the distance is larger than u.
+  // That is, if you provided a upper bound u, then if the value is inf, which means the minimum
+  // distance will be larger than u, but the accurate value is unknown and not maintained. But if
+  // the value is not inf, which means the value is the extact minimum distance.
+  // We won't check whether the (x,y) is out of boundry.
+  int Get(int x, int y) const override;
+
+  // Update should be called after an obstacle is added or removed at cell (x,y).
+  // The nearby cells in the left-top quadrant within a distance of u will be updated.
+  // We won't check whether the (x,y) is out of boundry.
+  void Update(int x, int y) override;
 };
 
 ////////////////////////////////////
@@ -215,6 +217,19 @@ class BrushfireClearanceField : public ClearanceFieldBase {
 
   // Build should be called on an **empty** map before any further feature is used.
   void Build() override;
+
+  // Returns the pre-calculated minimum distance from cell (x,y) to the nearest obstacle around.
+  // Returns a number > u or just inf if the distance is larger than u.
+  // That is, if you provided a upper bound u, then if the value is inf, which means the minimum
+  // distance will be larger than u, but the accurate value is unknown and not maintained. But if
+  // the value is not inf, which means the value is the extact minimum distance.
+  // We won't check whether the (x,y) is out of boundry.
+  int Get(int x, int y) const override;
+
+  // Update should be called after an obstacle is added or removed at cell (x,y).
+  // The nearby cells within a distance of u will be updated.
+  // We won't check whether the (x,y) is out of boundry.
+  void Update(int x, int y) override;
 };
 
 }  // namespace clearance_field
