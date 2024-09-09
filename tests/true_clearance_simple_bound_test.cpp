@@ -8,7 +8,7 @@ using clearance_field::TrueClearanceField;
 
 // Reference:
 // https://web.archive.org/web/20190411040123/http://aigamedev.com/open/article/clearance-based-pathfinding/
-TEST_CASE("simple with bound") {
+TEST_CASE("simple with bound - TrueClearanceField") {
   int w = 10, h = 10;
 
   int G[10][10] = {
