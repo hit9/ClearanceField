@@ -3,7 +3,7 @@
 
 #include <catch2/catch_all.hpp>
 
-#include "clearance_field_interface.hpp"
+#include "clearance_field.hpp"
 
 using clearance_field::IClearanceField;
 using clearance_field::ObstacleChecker;

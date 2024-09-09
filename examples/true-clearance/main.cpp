@@ -1,8 +1,7 @@
 #include <iomanip>
 #include <iostream>
 
-#include "clearance_field_impl_true.hpp"
-#include "clearance_field_interface.hpp"
+#include "clearance_field.hpp"
 
 const int w = 10, h = 10;
 
