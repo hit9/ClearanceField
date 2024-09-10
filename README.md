@@ -44,7 +44,7 @@ A cell is able to walk through when its value is not smaller than the agent's si
 ### Code example
 
 ```cpp
-clearance_field::ObstacleChecker isObstacle = [](int x, int y) { return grid[x][y]; };
+clearance_field::ObstacleChecker isObstacle = [](int x, int y) { return grid[y][x]; };
 clearance_field::TrueClearanceField field(w, h, 1e5, 1, 1, isObstacle);
 // OR clearance_field::BrushfireClearanceField field(w, h, 1e5, 1, 1, isObstacle);
 
