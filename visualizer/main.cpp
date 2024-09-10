@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
   if (ParseOptionsFromCommandline(argc, argv, options) != 0) return -1;
 
   // Field
-  ObstacleChecker isObstacle = [](int x, int y) { return GRID[x][y]; };
+  ObstacleChecker isObstacle = [](int x, int y) { return GRID[y][x]; };
 
   IClearanceField* field = nullptr;
   if (options.implementer == 0) {
@@ -278,7 +278,7 @@ int Visualizer::handleInputs() {
         }
         break;
       case SDL_MOUSEBUTTONDOWN:  // invert obstacles
-        handleInvertObstacle(e.button.y / GRID_SIZE, e.button.x / GRID_SIZE);
+        handleInvertObstacle(e.button.x / GRID_SIZE, e.button.y / GRID_SIZE);
         spdlog::info("invert an obstacle");
         break;
     }
@@ -287,10 +287,10 @@ int Visualizer::handleInputs() {
 }
 
 void Visualizer::reset() {
-  for (int x = 0; x < options.h; ++x) {
-    for (int y = 0; y < options.w; ++y) {
-      if (GRID[x][y]) {
-        GRID[x][y] = 0;
+  for (int y = 0; y < options.h; ++y) {
+    for (int x = 0; x < options.w; ++x) {
+      if (GRID[y][x]) {
+        GRID[y][x] = 0;
         field->Update(x, y);
       }
     }
@@ -299,22 +299,22 @@ void Visualizer::reset() {
 }
 
 void Visualizer::handleInvertObstacle(int x, int y) {
-  GRID[x][y] ^= 1;
+  GRID[y][x] ^= 1;
   field->Update(x, y);
   int n = field->Compute();
   spdlog::info("updated {} cells", n);
 }
 
 void Visualizer::draw() {
-  for (int x = 0; x < options.h; ++x) {
-    for (int y = 0; y < options.w; ++y) {
-      SDL_Rect rect{y * GRID_SIZE, x * GRID_SIZE, GRID_SIZE, GRID_SIZE};
+  for (int y = 0; y < options.h; ++y) {
+    for (int x = 0; x < options.w; ++x) {
+      SDL_Rect rect{x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE};
       SDL_Rect inner = {rect.x + 1, rect.y + 1, rect.w - 2, rect.h - 2};
       // black border
       SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
       SDL_RenderDrawRect(renderer, &rect);
       // for obstacles: red background.
-      if (GRID[x][y]) {
+      if (GRID[y][x]) {
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
         SDL_RenderFillRect(renderer, &inner);
       }

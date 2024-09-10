@@ -28,7 +28,7 @@ TEST_CASE("simple - TrueClearanceField") {
 
   int grid[10][10] = {0};
 
-  ObstacleChecker isObstacle = [&grid](int x, int y) { return grid[x][y]; };
+  ObstacleChecker isObstacle = [&grid](int x, int y) { return grid[y][x]; };
   TrueClearanceField field(w, h, 1024, 1, 1, isObstacle);
   field.Build();
 
@@ -50,10 +50,10 @@ TEST_CASE("simple - TrueClearanceField") {
   FieldAssertEq<10, 10>(&field, expect1);
   Validate<10, 10, 1>(&field, isObstacle);
 
-  for (int x = 0; x < h; ++x) {
-    for (int y = 0; y < w; ++y) {
-      if (G[x][y]) {
-        grid[x][y] = 1;
+  for (int y = 0; y < h; ++y) {
+    for (int x = 0; x < w; ++x) {
+      if (G[y][x]) {
+        grid[y][x] = 1;
         field.Update(x, y);
       }
     }
