@@ -51,7 +51,7 @@ clearance_field::TrueClearanceField field(w, h, 1e5, 1, 1, isObstacle);
 field.Build();
 
 // Add obstacle at (x,y).
-grid[x][y] = 1;
+grid[y][x] = 1;
 field.Update(x, y);
 
 // Compute after any Update(s).
