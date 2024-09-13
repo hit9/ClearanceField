@@ -1,10 +1,10 @@
 #include <catch2/catch_all.hpp>
 
-#include "clearance_field.hpp"
+#include "ClearanceField.h"
 #include "helper.hpp"
 
-using clearance_field::BrushfireClearanceField;
-using clearance_field::ObstacleChecker;
+using ClearanceField::BrushfireClearanceField;
+using ClearanceField::ObstacleChecker;
 
 TEST_CASE("simple - BrushfireClearanceField")
 {

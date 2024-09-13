@@ -1,5 +1,5 @@
 // Incremental clearance field (minimum obstacle distance) on 2D grid map.
-// Source code: https://github.com/hit9/clearance-field
+// Source code: https://github.com/hit9/ClearanceField
 // Author: hit9[At]icloud.com, License: BSD
 
 // Version: 0.3.0
@@ -19,8 +19,8 @@
 // v0.4.0: Breaking: Change code style to ue.
 // v0.3.0: inverts the coordinates.
 
-#ifndef CLEARANCE_FIELD_HPP
-#define CLEARANCE_FIELD_HPP
+#ifndef CLEARANCE_FIELD_H
+#define CLEARANCE_FIELD_H
 
 #include <functional> // for std::function
 #include <map>
@@ -28,7 +28,7 @@
 #include <utility> // for std::pair
 #include <vector>
 
-namespace clearance_field
+namespace ClearanceField
 {
 
 	static const int inf = 0x3f3f3f3f;
@@ -246,6 +246,6 @@ namespace clearance_field
 		void Update(int x, int y) override;
 	};
 
-} // namespace clearance_field
+} // namespace ClearanceField
 
 #endif

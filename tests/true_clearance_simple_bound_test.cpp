@@ -1,10 +1,10 @@
 #include <catch2/catch_all.hpp>
 
-#include "clearance_field.hpp"
+#include "ClearanceField.h"
 #include "helper.hpp"
 
-using clearance_field::ObstacleChecker;
-using clearance_field::TrueClearanceField;
+using ClearanceField::ObstacleChecker;
+using ClearanceField::TrueClearanceField;
 
 // Reference:
 // https://web.archive.org/web/20190411040123/http://aigamedev.com/open/article/clearance-based-pathfinding/

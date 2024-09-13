@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(true-clearance-field-example)
+project(TrueClearanceFieldExample)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
-include_directories("../..")
+include_directories("../../Source")
 
-file(GLOB SOURCES main.cpp ../../*.cpp)
-add_executable(true-clearance-field-example ${SOURCES})
+file(GLOB SOURCES main.cpp ../../Source/*.cpp)
+add_executable(TrueClearanceFieldExample ${SOURCES})

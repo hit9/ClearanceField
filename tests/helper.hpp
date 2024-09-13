@@ -3,10 +3,10 @@
 
 #include <catch2/catch_all.hpp>
 
-#include "clearance_field.hpp"
+#include "ClearanceField.h"
 
-using clearance_field::IClearanceField;
-using clearance_field::ObstacleChecker;
+using ClearanceField::IClearanceField;
+using ClearanceField::ObstacleChecker;
 
 // Should field equals to expect.
 template <int w, int h>

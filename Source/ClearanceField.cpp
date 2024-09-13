@@ -1,12 +1,12 @@
 // Dynamical clearance field (minimum obstacle distance) on 2D grid map.
-// Source code: https://github.com/hit9/clearance-field
+// Source code: https://github.com/hit9/ClearanceField
 // Author: hit9[At]icloud.com, License: BSD
 
-#include "clearance_field.hpp"
+#include "ClearanceField.h"
 
 #include <cassert>
 
-namespace clearance_field
+namespace ClearanceField
 {
 
 	// 8 directions of (dx, dy, cost)
@@ -351,4 +351,4 @@ namespace clearance_field
 		lpa->Update(x + 1, y + 1);
 	}
 
-} // namespace clearance_field
+} // namespace ClearanceField

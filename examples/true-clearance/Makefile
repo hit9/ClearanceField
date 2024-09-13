@@ -1,16 +1,16 @@
 default: build
 
 cmake:
-	cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+	cmake -S . -B Build -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=1
 
 build:
-	@if [ ! -d build ]; then \
+	@if [ ! -d Build ]; then \
 		$(MAKE) cmake; \
 	fi
-	make -C build
+	make -C Build
 
 run:
-	./build/true-clearance-field-example
+	./build/TrueClearanceFieldExample
 
 .PHONY: build
 
