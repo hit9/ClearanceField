@@ -43,10 +43,16 @@ A cell is able to walk through when its value is not smaller than the agent's si
 
 ### Code example
 
+How to use:
+
+Copy away the the files inside folder `Source`.
+
+Simple code example:
+
 ```cpp
-clearance_field::ObstacleChecker isObstacle = [](int x, int y) { return grid[y][x]; };
-clearance_field::TrueClearanceField field(w, h, 1e5, 1, 1, isObstacle);
-// OR clearance_field::BrushfireClearanceField field(w, h, 1e5, 1, 1, isObstacle);
+ClearanceField::ObstacleChecker isObstacle = [](int x, int y) { return grid[y][x]; };
+ClearanceField::TrueClearanceField field(w, h, 1e5, 1, 1, isObstacle);
+// OR ClearanceField::BrushfireClearanceField field(w, h, 1e5, 1, 1, isObstacle);
 
 field.Build();
 
@@ -66,7 +72,7 @@ field.Get(x, y);
 ```bash
 make -C visualizer
 cd visualizer
-./build/clearance-field-visualizer -w 20 -h 20 -impl 1 -u 3
+./Build/ClearanceFieldVisualizer -w 20 -h 20 -impl 1 -u 3
 ```
 
 ### License

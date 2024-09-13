@@ -6,13 +6,13 @@
 #include <cstring>
 #include <string>
 
-#include "clearance_field.hpp"
+#include "ClearanceField.h"
 
-using clearance_field::BrushfireClearanceField;
-using clearance_field::IClearanceField;
-using clearance_field::inf;
-using clearance_field::ObstacleChecker;
-using clearance_field::TrueClearanceField;
+using ClearanceField::BrushfireClearanceField;
+using ClearanceField::IClearanceField;
+using ClearanceField::inf;
+using ClearanceField::ObstacleChecker;
+using ClearanceField::TrueClearanceField;
 
 const int GRID_SIZE = 32;
 const int N = 100;
