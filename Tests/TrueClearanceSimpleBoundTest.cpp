@@ -1,14 +1,14 @@
 #include <catch2/catch_all.hpp>
 
 #include "ClearanceField.h"
-#include "helper.hpp"
+#include "Helper.h"
 
 using ClearanceField::ObstacleChecker;
 using ClearanceField::TrueClearanceField;
 
 // Reference:
 // https://web.archive.org/web/20190411040123/http://aigamedev.com/open/article/clearance-based-pathfinding/
-TEST_CASE("simple - TrueClearanceField")
+TEST_CASE("simple with bound - TrueClearanceField")
 {
 	int w = 10, h = 10;
 
@@ -30,17 +30,17 @@ TEST_CASE("simple - TrueClearanceField")
 	int grid[10][10] = { 0 };
 
 	ObstacleChecker	   isObstacle = [&grid](int x, int y) { return grid[y][x]; };
-	TrueClearanceField field(w, h, 1024, 1, 1, isObstacle);
+	TrueClearanceField field(w, h, 4, 1, 1, isObstacle);
 	field.Build();
 
 	int expect1[10][10] = {
 		// clang-format off
-     {10, 9, 8, 7, 6, 5, 4, 3, 2, 1},
-      {9, 9, 8, 7, 6, 5, 4, 3, 2, 1},
-      {8, 8, 8, 7, 6, 5, 4, 3, 2, 1},
-      {7, 7, 7, 7, 6, 5, 4, 3, 2, 1},
-      {6, 6, 6, 6, 6, 5, 4, 3, 2, 1},
-      {5, 5, 5, 5, 5, 5, 4, 3, 2, 1},
+      {4, 4, 4, 4, 4, 4, 4, 3, 2, 1},
+      {4, 4, 4, 4, 4, 4, 4, 3, 2, 1},
+      {4, 4, 4, 4, 4, 4, 4, 3, 2, 1},
+      {4, 4, 4, 4, 4, 4, 4, 3, 2, 1},
+      {4, 4, 4, 4, 4, 4, 4, 3, 2, 1},
+      {4, 4, 4, 4, 4, 4, 4, 3, 2, 1},
       {4, 4, 4, 4, 4, 4, 4, 3, 2, 1},
       {3, 3, 3, 3, 3, 3, 3, 3, 2, 1},
       {2, 2, 2, 2, 2, 2, 2, 2, 2, 1},
@@ -48,7 +48,7 @@ TEST_CASE("simple - TrueClearanceField")
 		// clang-format on
 	};
 
-	FieldAssertEq<10, 10>(&field, expect1);
+	FieldAssertEqOrGt<10, 10>(&field, expect1);
 	Validate<10, 10, 1>(&field, isObstacle);
 
 	for (int y = 0; y < h; ++y)
