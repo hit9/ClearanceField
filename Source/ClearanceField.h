@@ -2,7 +2,7 @@
 // Source code: https://github.com/hit9/ClearanceField
 // Author: hit9[At]icloud.com, License: BSD
 
-// Version: 0.3.0
+// Version: 0.4.0
 
 // Contents
 // ~~~~~~~~
