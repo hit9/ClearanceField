@@ -55,9 +55,9 @@ namespace ClearanceField
 	public:
 		virtual ~IClearanceField() {}
 
-		// SetUpdatedCellVisistor sets a function to listen cells of which the clearance value
+		// SetUpdatedCellVisitor sets a function to listen cells of which the clearance value
 		// are changed by a Compute() call.
-		virtual void SetUpdatedCellVisistor(CellVisitor f) = 0;
+		virtual void SetUpdatedCellVisitor(CellVisitor f) = 0;
 
 		// Build the clearance field on an **empty** 2D grid map.
 		// This method should be called before any further feature is used.
@@ -102,7 +102,7 @@ namespace ClearanceField
 			SuccessorsVisitor	successorVisitor);
 
 		// Sets a callback function to visit the updated cells.
-		void SetUpdatedCellVisistor(CellVisitor f) { updatedCellVisitor = f; }
+		void SetUpdatedCellVisitor(CellVisitor f) { updatedCellVisitor = f; }
 
 		// Returns the clearance value for cell (x,y).
 		int Get(int x, int y) const;
@@ -149,7 +149,7 @@ namespace ClearanceField
 			ObstacleChecker isObstacle);
 
 		// Sets a function to listen the cells of which the value is updated by Compute.
-		void SetUpdatedCellVisistor(CellVisitor f) override;
+		void SetUpdatedCellVisitor(CellVisitor f) override;
 
 		// Compute should be called after any changes.
 		// Returns the number of cells updated.
