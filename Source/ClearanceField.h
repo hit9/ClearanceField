@@ -2,7 +2,7 @@
 // Source code: https://github.com/hit9/ClearanceField
 // Author: hit9[At]icloud.com, License: BSD
 
-// Version: 0.4.0
+// Version: 0.4.1
 
 // Contents
 // ~~~~~~~~
@@ -16,6 +16,7 @@
 
 // Changes:
 // ~~~~~~~~~
+// v0.4.1: Breaking: Fix typo: SetUpdatedCellVisitor
 // v0.4.0: Breaking: Change code style to ue.
 // v0.3.0: inverts the coordinates.
 
